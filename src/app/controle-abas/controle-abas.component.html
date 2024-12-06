@@ -1,0 +1,14 @@
+<section class="item-abas">
+  <item-abas-header
+    *ngFor="let item of abas"
+    [Header]="item.header"
+    [EstaAtivo]="item.conteudo.instance.EstaAtivo"
+    [UniqueCode]="item.uniqueCode"
+    (Selecionado)="selecionarAba($event)"
+    (Fechar)="fecharAba($event)"
+  ></item-abas-header>
+</section>
+
+<section class="conteudo-abas">
+  <ng-container #containerRef></ng-container>
+</section>

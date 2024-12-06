@@ -1,0 +1,10 @@
+<div class="header-aba">
+  {{ Header | titlecase }}
+</div>
+<div class="fechar-btn">
+  <img
+    src="Images\fechar.png"
+    alt="X"
+    (click)="fecharAba(); $event.stopPropagation()"
+  />
+</div>

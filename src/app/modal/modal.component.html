@@ -1,0 +1,11 @@
+<section>
+  <div class="header">
+    <span> {{ Titulo }} </span>
+    <button (click)="fecharModal('cancel')">X</button>
+  </div>
+  <div class="content">{{ Mensagem }}</div>
+  <div class="footer">
+    <button (click)="fecharModal('yes')">Sim</button>
+    <button (click)="fecharModal('no')">Não</button>
+  </div>
+</section>
