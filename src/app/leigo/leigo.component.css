@@ -8,3 +8,34 @@ form {
 button {
   grid-column: 1/3;
 }
+
+/* Estilo para a tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 14px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: left;
+}
+
+/* Estilo para o cabeçalho da tabela */
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* Mensagem de nenhum resultado encontrado */
+p {
+  margin-top: 1rem;
+  font-size: 14px;
+  color: red;
+  font-weight: bold;
+}

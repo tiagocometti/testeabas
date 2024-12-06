@@ -42,6 +42,8 @@ section > .header > button:hover {
 
 section > .content {
   padding: 0.5rem;
+  white-space: normal; /* Permite quebras de linha no texto */
+  line-height: 1.5; /* Ajusta o espaçamento entre linhas */
 }
 
 section > .footer {

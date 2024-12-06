@@ -2,5 +2,33 @@
   <label for="fn">Nome da Empresa:</label>
   <input type="text" id="fn" [formControl]="inputControl" />
 
-  <button>Pesquisar</button>
+  <button type="button" (click)="realizarPesquisa()">Pesquisar</button>
+
+
 </form>
+  <!-- Exibe a tabela apenas se houver um resultado -->
+  <div *ngIf="resultadoPesquisa">
+    <h3>Resultado da Pesquisa</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Razão Social</th>
+          <th>Faixa</th>
+          <th>CNPJ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ resultadoPesquisa.razsocial }}</td>
+          <td>{{ resultadoPesquisa.faixa }}</td>
+          <td>{{ resultadoPesquisa.cnpj }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Mensagem de "Nenhum resultado encontrado" -->
+  <div *ngIf="!resultadoPesquisa && inputControl.touched && inputControl.value">
+    <p>Nenhuma empresa encontrada.</p>
+  </div>
+  

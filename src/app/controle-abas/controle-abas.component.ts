@@ -105,36 +105,45 @@ export class ControleAbasComponent implements OnDestroy {
   }
 
   fecharAba(uniqueCode: string) {
-    var abaParaFechar: IAbas | null = null;
-    var indice = -1;
-
-    for (let i = 0; i < this.abas.length; i++)
+    let abaParaFechar: IAbas | null = null;
+    let indice = -1;
+  
+    // Localizar a aba que será fechada
+    for (let i = 0; i < this.abas.length; i++) {
       if (this.abas[i].uniqueCode === uniqueCode) {
         abaParaFechar = this.abas[i];
         indice = i;
+        break;
       }
-
-    var component = abaParaFechar?.conteudo.instance as IAbasComponent;
-
-    if (component.PodeFechar()) {
-      var subscription = this.modalService
-        .mostrarModal(
-          'Tem certeza que quer fechar a aba? O conteúdo pesquisado será perdido.'
-        )
-        .subscribe({
-          next: (res: string) => {
-            if (res === 'yes') {
-              if (abaParaFechar !== null) {
-                this.removerAba(abaParaFechar!, indice);
-              }
-            }
-
-            subscription.unsubscribe();
-          },
-          error: (err) => console.log(err),
-        });
     }
+  
+    if (!abaParaFechar) return;
+  
+    const component = abaParaFechar.conteudo.instance as IAbasComponent;
+  
+    // Verificar se a aba pode ser fechada sem confirmação
+    if (!component.PodeFechar()) {
+      // Fechar diretamente
+      this.removerAba(abaParaFechar, indice);
+      return;
+    }
+  
+    // Exibir o modal para confirmação
+    const subscription = this.modalService
+      .mostrarModal(
+        'Tem certeza que quer fechar a aba?<br>O conteúdo pesquisado será perdido.'
+      )
+      .subscribe({
+        next: (res: string) => {
+          if (res === 'yes') {
+            this.removerAba(abaParaFechar!, indice);
+          }
+          subscription.unsubscribe();
+        },
+        error: (err) => console.log(err),
+      });
   }
+  
 
   removerAba(abaParaRemover: IAbas, indice: number) {
     if (abaParaRemover.conteudo.instance.EstaAtivo) {

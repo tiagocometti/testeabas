@@ -1,6 +1,34 @@
 <form>
-    <label for="fn">Nome do Leigo:</label>
-    <input type="text" id="fn" [formControl]="inputControl">
-
-    <button>Pesquisar</button>
-</form>
+    <label for="fn">Nome da Empresa:</label>
+    <input type="text" id="fn" [formControl]="inputControl" />
+  
+    <button type="button" (click)="realizarPesquisa()">Pesquisar</button>
+  
+  
+  </form>
+  <!-- Exibe a tabela apenas se houver um resultado -->
+  <div *ngIf="resultadoPesquisa">
+    <h3>Resultado da Pesquisa</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CPF</th>
+          <th>CNPJ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ resultadoPesquisa.nome }}</td>
+          <td>{{ resultadoPesquisa.cpf }}</td>
+          <td>{{ resultadoPesquisa.cnpj }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Mensagem de "Nenhum resultado encontrado" -->
+  <div *ngIf="!resultadoPesquisa && inputControl.touched && inputControl.value">
+    <p>Nenhum leigo encontrado.</p>
+  </div>
+  

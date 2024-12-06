@@ -1,7 +1,33 @@
 <form>
-  <label for="fn">Nome do Profissional:</label>
-  <input type="text" id="fn" [formControl]="inputControl" />
-
-  <button>Pesquisar</button>
-  <button (click)="abrirEmpresa()">Empresa</button>
-</form>
+    <label for="fn">Nome do Profissional:</label>
+    <input type="text" id="fn" [formControl]="inputControl" />
+  
+    <button type="button" (click)="realizarPesquisa()">Pesquisar</button>
+  </form>
+  
+  <!-- Exibe a tabela apenas se houver um resultado -->
+  <div *ngIf="resultadoPesquisa">
+    <h3>Resultado da Pesquisa</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Profissão</th>
+          <th>CPF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ resultadoPesquisa.nome }}</td>
+          <td>{{ resultadoPesquisa.titulo }}</td>
+          <td>{{ resultadoPesquisa.cpf }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Mensagem de "Nenhum resultado encontrado" -->
+  <div *ngIf="!resultadoPesquisa && inputControl.touched && inputControl.value">
+    <p>Nenhum profissional encontrado.</p>
+  </div>
+  
