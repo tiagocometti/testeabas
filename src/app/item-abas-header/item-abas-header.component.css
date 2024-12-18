@@ -4,8 +4,13 @@
   gap: 0.5rem;
   cursor: pointer;
   height: 100%;
-  border-bottom: 1px solid black;
-  padding: 0rem 0.3rem 0rem 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: #e6e0e0;
+  margin-right: 5px;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 :host.active {
