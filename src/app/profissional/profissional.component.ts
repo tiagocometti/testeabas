@@ -28,8 +28,10 @@ export class ProfissionalComponent implements IAbasComponent {
   }
 
   PodeFechar(): boolean {
-    return this.inputControl.value === '' || this.resultadoPesquisa === null;
+    if (this.inputControl.value !== '' ) return true;
+    else return false;
   }
+
 
   realizarPesquisa() {
     const nomePesquisado = this.inputControl.value.trim();
