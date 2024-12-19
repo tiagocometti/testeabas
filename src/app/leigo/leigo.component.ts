@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common'; // Adicionado aqui
 import { IAbasComponent } from '../interfaces/interfaces';
+import { Router } from '@angular/router'; // Adicionado para manipular rotas
 
 @Component({
   selector: 'leigo',
@@ -13,6 +14,7 @@ import { IAbasComponent } from '../interfaces/interfaces';
 export class LeigoComponent implements IAbasComponent {
   inputControl: FormControl;
   @Input() EstaAtivo: boolean = true;
+  lastFunctionality: string = ''; // Adicionado para armazenar a funcionalidade atual
 
       // Dados estáticos para simular resultados de pesquisa
       dadosLeigos = [
@@ -22,7 +24,7 @@ export class LeigoComponent implements IAbasComponent {
     
       resultadoPesquisa: { nome: string; cpf: string; cnpj: string } | null = null;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private router: Router) {
     this.inputControl = fb.control('');
   }
 
@@ -32,14 +34,23 @@ export class LeigoComponent implements IAbasComponent {
   }
 
   realizarPesquisa() {
-    const nomePesquisado = this.inputControl.value.trim();
-    if (nomePesquisado) {
-      // Simula a pesquisa nos dados estáticos
-      this.resultadoPesquisa = this.dadosLeigos.find(
-        (leigo) => leigo.nome.toLowerCase() === nomePesquisado.toLowerCase()
-      ) || null;
+    const leigoPesquisado = this.inputControl.value.trim();
+    const abaId = this.router.url.split('/')[1]; // Extrai o uniqueCode da URL
+
+    if (leigoPesquisado) {
+      this.resultadoPesquisa =
+        this.dadosLeigos.find(
+          (leigo) =>
+            leigo.nome.toLowerCase() === leigoPesquisado.toLowerCase()
+        ) || null;
+
+      // Atualiza o estado e o endereço com o nome pesquisado (mesmo se não encontrado)
+      this.lastFunctionality = leigoPesquisado;
+      this.router.navigate([`/${abaId}`, leigoPesquisado]); // Exemplo: /profissional-0/joao
     } else {
-      this.resultadoPesquisa = null; // Nenhum resultado encontrado
+      // Se o input está vazio, reseta para apenas o uniqueCode
+      this.resultadoPesquisa = null;
+      this.router.navigate([`/${abaId}`]); // Exemplo: /profissional-0
     }
   }
 

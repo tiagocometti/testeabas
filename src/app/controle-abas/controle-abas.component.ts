@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { IAbas, IAbasComponent } from '../interfaces/interfaces';
 import { AbasService } from '../services/abas.service';
 import { ModalService } from '../services/modal.service';
+import { Router } from '@angular/router'; // Adicionado para navegação dinâmica
 
 @Component({
   selector: 'controle-abas',
@@ -37,7 +38,8 @@ export class ControleAbasComponent implements OnDestroy {
 
   constructor(
     private abasService: AbasService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private router: Router // Adicionado para navegação dinâmica
   ) {
     this.itemAbasSubscription = abasService.itemAbaObservable.subscribe({
       next: (res: string) => {
@@ -47,6 +49,11 @@ export class ControleAbasComponent implements OnDestroy {
         console.log(err);
       },
     });
+
+    // Verifica se não há abas ativas ao carregar
+    if (this.abas.length === 0) {
+      this.router.navigate(['/']); // Redireciona para a raiz
+    }
   }
 
   ngOnDestroy(): void {
@@ -74,6 +81,9 @@ export class ControleAbasComponent implements OnDestroy {
       conteudo: component,
       view: this.containerRef.get(0)!,
     });
+
+    // Atualiza o endereço com apenas o uniqueCode (sem funcionalidade inicial)
+    this.router.navigate([`/${uniqueCode}`]); // Exemplo: /profissional-0
   }
 
   getTipoComponent(code: string): Type<any> {
@@ -98,6 +108,10 @@ export class ControleAbasComponent implements OnDestroy {
         aba.conteudo.instance.EstaAtivo = true;
         this.containerRef.detach();
         this.containerRef.insert(aba.view);
+
+        // Atualiza o endereço com o uniqueCode e a funcionalidade (se houver)
+        const functionality = aba.conteudo.instance.lastFunctionality || '';
+        this.router.navigate([`/${uniqueCode}`, functionality]); // Exemplo: /profissional-0/joao
       } else {
         aba.conteudo.instance.EstaAtivo = false;
       }
@@ -107,7 +121,7 @@ export class ControleAbasComponent implements OnDestroy {
   fecharAba(uniqueCode: string) {
     let abaParaFechar: IAbas | null = null;
     let indice = -1;
-  
+
     // Localizar a aba que será fechada
     for (let i = 0; i < this.abas.length; i++) {
       if (this.abas[i].uniqueCode === uniqueCode) {
@@ -116,18 +130,18 @@ export class ControleAbasComponent implements OnDestroy {
         break;
       }
     }
-  
+
     if (!abaParaFechar) return;
-  
+
     const component = abaParaFechar.conteudo.instance as IAbasComponent;
-  
+
     // Verificar se a aba pode ser fechada sem confirmação
     if (!component.PodeFechar()) {
       // Fechar diretamente
       this.removerAba(abaParaFechar, indice);
       return;
     }
-  
+
     // Exibir o modal para confirmação
     const subscription = this.modalService
       .mostrarModal(
@@ -143,30 +157,29 @@ export class ControleAbasComponent implements OnDestroy {
         error: (err) => console.log(err),
       });
   }
-  
 
   removerAba(abaParaRemover: IAbas, indice: number) {
     if (abaParaRemover.conteudo.instance.EstaAtivo) {
-      // desativar esta aba
       abaParaRemover.conteudo.instance.EstaAtivo = false;
 
-      // remover de abas e componentRef
       this.abas.splice(indice, 1);
       this.containerRef.detach();
 
-      //fazer outras abas ativas, se presentes.
       if (this.abas.length > 0) {
-        // Se isso for o último, então o próximo está ativo, se não faça o anterior ativo.
         if (indice === this.abas.length) {
           this.abas[indice - 1].conteudo.instance.EstaAtivo = true;
           this.containerRef.insert(this.abas[indice - 1].view);
+          this.router.navigate([`/${this.abas[indice - 1].uniqueCode}`]);
         } else {
           this.abas[indice].conteudo.instance.EstaAtivo = true;
           this.containerRef.insert(this.abas[indice].view);
+          this.router.navigate([`/${this.abas[indice].uniqueCode}`]);
         }
+      } else {
+        // Se não houver abas abertas, redireciona para a raiz
+        this.router.navigate(['/']);
       }
     } else {
-      //Remover de abas
       this.abas.splice(indice, 1);
     }
   }
