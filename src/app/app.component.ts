@@ -21,6 +21,8 @@ export class AppComponent implements AfterViewInit {
   title = 'TesteAbas';
   @ViewChild('modal', { read: ViewContainerRef, static: true })
   conteinerRef!: ViewContainerRef;
+  abasVisiveisTexto: string = '';
+  abasExcedentesTexto: string = '';
 
   constructor(
     private abasService: AbasService,
@@ -33,5 +35,13 @@ export class AppComponent implements AfterViewInit {
 
   inserirComponent(code: string) {
     this.abasService.itemAbaObservable.next(code);
+  }
+
+  atualizarAbasVisiveis(texto: string) {
+    this.abasVisiveisTexto = texto;
+  }
+
+  atualizarAbasExcedentes(texto: string) {
+    this.abasExcedentesTexto = texto;
   }
 }

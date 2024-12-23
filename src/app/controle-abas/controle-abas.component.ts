@@ -4,6 +4,8 @@ import {
   ViewChild,
   ViewContainerRef,
   Type,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Importando o CommonModule
 import { ItemAbasHeaderComponent } from '../item-abas-header/item-abas-header.component';
@@ -33,8 +35,11 @@ export class ControleAbasComponent implements OnDestroy {
   itemAbasSubscription: Subscription;
   indice: number = 0;
   abas: IAbas[] = [];
+  excedentes: IAbas[] = [];
   @ViewChild('containerRef', { read: ViewContainerRef, static: true })
   containerRef!: ViewContainerRef;
+  @Output() abasVisiveisMudaram = new EventEmitter<string>();
+  @Output() abasExcedentesMudaram = new EventEmitter<string>();
 
   constructor(
     private abasService: AbasService,
@@ -44,11 +49,16 @@ export class ControleAbasComponent implements OnDestroy {
     this.itemAbasSubscription = abasService.itemAbaObservable.subscribe({
       next: (res: string) => {
         this.addNovaAba(res);
+        this.detectarAbasExcedentes(); // Atualiza a detecção ao adicionar novas abas
       },
       error: (err) => {
         console.log(err);
       },
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', this.detectarAbasExcedentes.bind(this)); // Monitora redimensionamento
+    }
 
     // Verifica se não há abas ativas ao carregar
     if (this.abas.length === 0) {
@@ -58,18 +68,24 @@ export class ControleAbasComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.itemAbasSubscription.unsubscribe();
+
+    if (typeof window !== 'undefined') {
+      window.removeEventListener(
+        'resize',
+        this.detectarAbasExcedentes.bind(this)
+      );
+    }
   }
 
   addNovaAba(code: string) {
-    var uniqueCode = code + '-' + this.indice;
+    const uniqueCode = `${code}-${this.indice}`;
     this.indice++;
 
     this.containerRef.detach();
-    var component = this.containerRef.createComponent(
+    const component = this.containerRef.createComponent(
       this.getTipoComponent(code)
     );
     component.instance.EstaAtivo = true;
-    this.containerRef.get(0);
 
     for (let aba of this.abas) {
       aba.conteudo.instance.EstaAtivo = false;
@@ -87,20 +103,91 @@ export class ControleAbasComponent implements OnDestroy {
   }
 
   getTipoComponent(code: string): Type<any> {
-    var tipo: Type<any> = ProfissionalComponent;
     switch (code) {
-      case 'profissional':
-        tipo = ProfissionalComponent;
-        break;
       case 'empresa':
-        tipo = EmpresaComponent;
-        break;
+        return EmpresaComponent;
       case 'leigo':
-        tipo = LeigoComponent;
-        break;
+        return LeigoComponent;
+      default:
+        return ProfissionalComponent;
     }
-    return tipo;
   }
+
+  private debounceTimeout: any = null; // Variável para armazenar o timeout do debounce
+
+  detectarAbasExcedentes() {
+    // Cancela execuções anteriores enquanto um novo evento é acionado rapidamente
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout);
+    }
+  
+    // Define um novo debounce de 100ms
+    this.debounceTimeout = setTimeout(() => {
+      const container = document.querySelector('.item-abas') as HTMLElement;
+  
+      if (!container) {
+        console.warn('Container .item-abas não encontrado.');
+        return;
+      }
+  
+      const abasHTML = Array.from(container.querySelectorAll('[data-unique-code]')) as HTMLElement[];
+  
+      if (abasHTML.length === 0) {
+        console.log('Nenhuma aba encontrada.');
+        return;
+      }
+  
+      let linhaInicial: number | null = null;
+  
+      this.excedentes = [];
+      const abasVisiveis: IAbas[] = [];
+  
+      for (const abaHTML of abasHTML) {
+        const linhaAtual = abaHTML.getBoundingClientRect().top;
+        const uniqueCode = abaHTML.getAttribute('data-unique-code');
+  
+        if (!uniqueCode) continue;
+  
+        const aba = this.abas.find((a) => a.uniqueCode === uniqueCode);
+  
+        if (!aba) continue;
+  
+        // Define a linha inicial com a posição da primeira aba encontrada
+        if (linhaInicial === null) {
+          linhaInicial = linhaAtual;
+        }
+  
+        // Se a aba estiver na mesma linha inicial, é visível; caso contrário, é excedente
+        if (linhaAtual > linhaInicial) {
+          this.excedentes.push(aba);
+        } else {
+          abasVisiveis.push(aba);
+        }
+      }
+  
+      // Atualiza os textos com base nos uniqueCodes das abas
+      const abasVisiveisTexto = abasVisiveis.map((aba) => aba.uniqueCode).join(', ');
+      const abasExcedentesTexto = this.excedentes.map((aba) => aba.uniqueCode).join(', ');
+  
+      // Exibe os resultados no console para depuração
+      console.log('Abas visíveis:', abasVisiveisTexto);
+      console.log('Abas excedentes:', abasExcedentesTexto);
+  
+      // Atualiza as propriedades para exibição na interface
+      this.abasVisiveisMudaram.emit(abasVisiveisTexto);
+      this.abasExcedentesMudaram.emit(abasExcedentesTexto);
+  
+      // Limpa o timeout após execução
+      this.debounceTimeout = null;
+    }, 100); // Tempo de debounce em milissegundos
+  }
+  
+  
+  
+  
+  
+  
+  
 
   selecionarAba(uniqueCode: string) {
     for (let aba of this.abas) {
@@ -109,7 +196,6 @@ export class ControleAbasComponent implements OnDestroy {
         this.containerRef.detach();
         this.containerRef.insert(aba.view);
 
-        // Atualiza o endereço com o uniqueCode e a funcionalidade (se houver)
         const functionality = aba.conteudo.instance.lastFunctionality || '';
         this.router.navigate([`/${uniqueCode}`, functionality]); // Exemplo: /profissional-0/joao
       } else {
@@ -119,68 +205,63 @@ export class ControleAbasComponent implements OnDestroy {
   }
 
   fecharAba(uniqueCode: string) {
-    let abaParaFechar: IAbas | null = null;
-    let indice = -1;
-
-    // Localizar a aba que será fechada
-    for (let i = 0; i < this.abas.length; i++) {
-      if (this.abas[i].uniqueCode === uniqueCode) {
-        abaParaFechar = this.abas[i];
-        indice = i;
-        break;
-      }
-    }
-
-    if (!abaParaFechar) return;
-
-    const component = abaParaFechar.conteudo.instance as IAbasComponent;
-
-    // Verificar se a aba pode ser fechada sem confirmação
-    if (!component.PodeFechar()) {
-      // Fechar diretamente
-      this.removerAba(abaParaFechar, indice);
+    const indice = this.abas.findIndex((aba) => aba.uniqueCode === uniqueCode);
+    if (indice === -1) return;
+  
+    const abaParaFechar = this.abas[indice];
+  
+    // Verifica se a aba pode ser fechada sem confirmação
+    if (!abaParaFechar.conteudo.instance.PodeFechar()) {
+      this.removerAba(indice);
       return;
     }
-
+  
     // Exibir o modal para confirmação
     const subscription = this.modalService
       .mostrarModal(
-        'Tem certeza que quer fechar a aba?<br>O conteúdo pesquisado será perdido.'
+        'Tem certeza que quer fechar a aba? O conteúdo será perdido.'
       )
       .subscribe({
-        next: (res: string) => {
+        next: (res) => {
           if (res === 'yes') {
-            this.removerAba(abaParaFechar!, indice);
+            this.removerAba(indice);
           }
           subscription.unsubscribe();
         },
         error: (err) => console.log(err),
       });
+  
+    // Atualiza as listas de abas após a remoção
+    setTimeout(() => {
+      this.detectarAbasExcedentes();
+    }, 0);
   }
+  
 
-  removerAba(abaParaRemover: IAbas, indice: number) {
+  removerAba(indice: number) {
+    const abaParaRemover = this.abas[indice];
     if (abaParaRemover.conteudo.instance.EstaAtivo) {
       abaParaRemover.conteudo.instance.EstaAtivo = false;
-
-      this.abas.splice(indice, 1);
+      this.abas.splice(indice, 1); // Remove a aba da lista
       this.containerRef.detach();
-
+  
       if (this.abas.length > 0) {
-        if (indice === this.abas.length) {
-          this.abas[indice - 1].conteudo.instance.EstaAtivo = true;
-          this.containerRef.insert(this.abas[indice - 1].view);
-          this.router.navigate([`/${this.abas[indice - 1].uniqueCode}`]);
-        } else {
-          this.abas[indice].conteudo.instance.EstaAtivo = true;
-          this.containerRef.insert(this.abas[indice].view);
-          this.router.navigate([`/${this.abas[indice].uniqueCode}`]);
-        }
+        const novaAbaAtiva = this.abas[Math.min(indice, this.abas.length - 1)];
+        novaAbaAtiva.conteudo.instance.EstaAtivo = true;
+        this.containerRef.insert(novaAbaAtiva.view);
+        this.router.navigate([`/${novaAbaAtiva.uniqueCode}`]);
       } else {
-        // Se não houver abas abertas, redireciona para a raiz
         this.router.navigate(['/']);
       }
     } else {
-      this.abas.splice(indice, 1);
+      this.abas.splice(indice, 1); // Remove a aba da lista mesmo se não estiver ativa
     }
+  
+    // Força o método a rodar após o DOM ser atualizado
+    setTimeout(() => {
+      this.detectarAbasExcedentes();
+    }, 0);
   }
+  
+  
 }

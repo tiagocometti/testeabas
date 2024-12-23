@@ -13,5 +13,14 @@
 </nav>
 
 <main>
-  <controle-abas></controle-abas>
+  <controle-abas
+    (abasVisiveisMudaram)="atualizarAbasVisiveis($event)"
+    (abasExcedentesMudaram)="atualizarAbasExcedentes($event)"
+  ></controle-abas>
 </main>
+
+<!-- Labels para exibir abas visíveis e excedentes -->
+<div style="margin-top: 20px;">
+  <label><strong>Abas Visíveis:</strong> {{ abasVisiveisTexto }}</label><br>
+  <label><strong>Abas Excedentes:</strong> {{ abasExcedentesTexto }}</label>
+</div>

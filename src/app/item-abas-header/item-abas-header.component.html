@@ -1,9 +1,12 @@
-<div class="header-aba">
-  {{ UniqueCode | titlecase }} 
+<div
+  class="header-aba"
+  [attr.data-unique-code]="UniqueCode"
+>
+  {{ UniqueCode | titlecase }}
 </div>
 <div class="fechar-btn">
   <img
-    src="Images\fechar.png"
+    src="Images/fechar.png"
     alt="X"
     (click)="fecharAba(); $event.stopPropagation()"
   />
