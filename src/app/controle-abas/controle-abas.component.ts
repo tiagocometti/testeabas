@@ -259,9 +259,5 @@ export class ControleAbasComponent implements OnDestroy {
     }, 0);
   }
 
-  abrirListaExcedentes() {
-    console.log('Abas excedentes:', this.excedentes);
-    // Aqui você pode implementar uma funcionalidade futura, como abrir um dropdown ou modal.
-  }
   
 }
