@@ -5,7 +5,7 @@ import {
   ViewContainerRef,
   Type,
   EventEmitter,
-  Output
+  Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Importando o CommonModule
 import { ItemAbasHeaderComponent } from '../item-abas-header/item-abas-header.component';
@@ -116,47 +116,46 @@ export class ControleAbasComponent implements OnDestroy {
   private debounceTimeout: any = null; // Variável para armazenar o timeout do debounce
 
   detectarAbasExcedentes() {
-    // Cancela execuções anteriores enquanto um novo evento é acionado rapidamente
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-    }
-  
-    // Define um novo debounce de 100ms
-    this.debounceTimeout = setTimeout(() => {
+    setTimeout(() => {
       const container = document.querySelector('.item-abas') as HTMLElement;
-  
+
       if (!container) {
         console.warn('Container .item-abas não encontrado.');
         return;
       }
-  
-      const abasHTML = Array.from(container.querySelectorAll('[data-unique-code]')) as HTMLElement[];
-  
+
+      const abasHTML = Array.from(
+        container.querySelectorAll('[data-unique-code]')
+      ) as HTMLElement[];
+
       if (abasHTML.length === 0) {
+        this.excedentes = [];
+        this.abasVisiveisMudaram.emit('');
+        this.abasExcedentesMudaram.emit('');
         console.log('Nenhuma aba encontrada.');
         return;
       }
-  
+
       let linhaInicial: number | null = null;
-  
+
       this.excedentes = [];
       const abasVisiveis: IAbas[] = [];
-  
+
       for (const abaHTML of abasHTML) {
         const linhaAtual = abaHTML.getBoundingClientRect().top;
         const uniqueCode = abaHTML.getAttribute('data-unique-code');
-  
+
         if (!uniqueCode) continue;
-  
+
         const aba = this.abas.find((a) => a.uniqueCode === uniqueCode);
-  
+
         if (!aba) continue;
-  
+
         // Define a linha inicial com a posição da primeira aba encontrada
         if (linhaInicial === null) {
           linhaInicial = linhaAtual;
         }
-  
+
         // Se a aba estiver na mesma linha inicial, é visível; caso contrário, é excedente
         if (linhaAtual > linhaInicial) {
           this.excedentes.push(aba);
@@ -164,30 +163,20 @@ export class ControleAbasComponent implements OnDestroy {
           abasVisiveis.push(aba);
         }
       }
-  
+
       // Atualiza os textos com base nos uniqueCodes das abas
-      const abasVisiveisTexto = abasVisiveis.map((aba) => aba.uniqueCode).join(', ');
-      const abasExcedentesTexto = this.excedentes.map((aba) => aba.uniqueCode).join(', ');
-  
-      // Exibe os resultados no console para depuração
-      console.log('Abas visíveis:', abasVisiveisTexto);
-      console.log('Abas excedentes:', abasExcedentesTexto);
-  
+      const abasVisiveisTexto = abasVisiveis
+        .map((aba) => aba.uniqueCode)
+        .join(', ');
+      const abasExcedentesTexto = this.excedentes
+        .map((aba) => aba.uniqueCode)
+        .join(', ');
+
       // Atualiza as propriedades para exibição na interface
       this.abasVisiveisMudaram.emit(abasVisiveisTexto);
       this.abasExcedentesMudaram.emit(abasExcedentesTexto);
-  
-      // Limpa o timeout após execução
-      this.debounceTimeout = null;
-    }, 100); // Tempo de debounce em milissegundos
+    }, 50); // Tempo ajustado para garantir sincronização
   }
-  
-  
-  
-  
-  
-  
-  
 
   selecionarAba(uniqueCode: string) {
     for (let aba of this.abas) {
@@ -207,15 +196,15 @@ export class ControleAbasComponent implements OnDestroy {
   fecharAba(uniqueCode: string) {
     const indice = this.abas.findIndex((aba) => aba.uniqueCode === uniqueCode);
     if (indice === -1) return;
-  
+
     const abaParaFechar = this.abas[indice];
-  
+
     // Verifica se a aba pode ser fechada sem confirmação
     if (!abaParaFechar.conteudo.instance.PodeFechar()) {
       this.removerAba(indice);
       return;
     }
-  
+
     // Exibir o modal para confirmação
     const subscription = this.modalService
       .mostrarModal(
@@ -230,38 +219,49 @@ export class ControleAbasComponent implements OnDestroy {
         },
         error: (err) => console.log(err),
       });
-  
+
     // Atualiza as listas de abas após a remoção
     setTimeout(() => {
       this.detectarAbasExcedentes();
     }, 0);
   }
-  
 
   removerAba(indice: number) {
     const abaParaRemover = this.abas[indice];
+
+    if (!abaParaRemover) {
+      console.warn('Aba para remover não encontrada.');
+      return;
+    }
+
+    // Verifica se a aba está ativa e precisa ser removida do DOM
     if (abaParaRemover.conteudo.instance.EstaAtivo) {
       abaParaRemover.conteudo.instance.EstaAtivo = false;
-      this.abas.splice(indice, 1); // Remove a aba da lista
       this.containerRef.detach();
-  
-      if (this.abas.length > 0) {
-        const novaAbaAtiva = this.abas[Math.min(indice, this.abas.length - 1)];
+
+      // Ativa a aba anterior ou próxima, se existir
+      if (this.abas.length > 1) {
+        const novaAbaAtiva = this.abas[indice === 0 ? 1 : indice - 1];
         novaAbaAtiva.conteudo.instance.EstaAtivo = true;
         this.containerRef.insert(novaAbaAtiva.view);
         this.router.navigate([`/${novaAbaAtiva.uniqueCode}`]);
       } else {
         this.router.navigate(['/']);
       }
-    } else {
-      this.abas.splice(indice, 1); // Remove a aba da lista mesmo se não estiver ativa
     }
-  
-    // Força o método a rodar após o DOM ser atualizado
+
+    // Remove a aba da lista
+    this.abas.splice(indice, 1);
+
+    // Aguarda o DOM se estabilizar e atualiza a detecção
     setTimeout(() => {
       this.detectarAbasExcedentes();
     }, 0);
   }
-  
+
+  abrirListaExcedentes() {
+    console.log('Abas excedentes:', this.excedentes);
+    // Aqui você pode implementar uma funcionalidade futura, como abrir um dropdown ou modal.
+  }
   
 }
