@@ -47,9 +47,9 @@ main > * {
   height: 100%;
 }
 
-#btn-entre-header-main {
+#btn-abas-excedentes {
     position: absolute;
-    top: calc(55px + 1rem); /* Ajusta a posição entre o header e o main */
+    top: calc(55.5px + 1rem); /* Ajusta a posição entre o header e o main */
     right: 15px; /* Margem direita */
     width: 15px; /* Largura do botão */
     height: 10px; /* Altura do botão */
@@ -62,11 +62,11 @@ main > * {
     cursor: pointer; /* Cursor de ponteiro */
   }
   
-  #btn-entre-header-main:hover {
+  #btn-abas-excedentes:hover {
     background-color: lightgreen; /* Cor mais escura ao passar o mouse */
   }
 
-  #btn-entre-header-main:active {
+  #btn-abas-excedentes:active {
     background-color: rgb(71, 119, 71);
   }
   
