@@ -1,48 +1,72 @@
 :host {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: 200px 1fr ;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 200px 1fr;
 }
 
 header {
-    grid-column: 1/3;
-    padding: 1rem;
-    border: 1px solid lightgray
+  grid-column: 1/3;
+  padding: 1rem;
+  border: 1px solid lightgray;
 }
 
 header h1 {
-    padding: 0 1rem;
-    width: max-content;
-    border: 2px solid lightcoral ;
+  padding: 0 1rem;
+  width: max-content;
+  border: 2px solid lightcoral;
 }
 
 nav {
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0 1rem;
 }
 
 nav ul {
-    list-style: none;
+  list-style: none;
 }
 
-nav ul li{
-    padding: 0.5rem;
-    border: 1px solid lightgray
+nav ul li {
+  padding: 0.5rem;
+  border: 1px solid lightgray;
 }
 
-nav ul li:not(:last-child){
-    margin-bottom: 1rem ;
+nav ul li:not(:last-child) {
+  margin-bottom: 1rem;
 }
 
 nav ul li:hover {
-    background-color: rgba(0, 0, 0, 0.1)
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-main{
-    border: 1px solid lightgray
+main {
+  border: 1px solid lightgray;
 }
 
-main>* {
-    height:100%
+main > * {
+  height: 100%;
 }
+
+#btn-entre-header-main {
+    position: absolute;
+    top: calc(55px + 1rem); /* Ajusta a posição entre o header e o main */
+    right: 15px; /* Margem direita */
+    width: 15px; /* Largura do botão */
+    height: 10px; /* Altura do botão */
+    display: flex; /* Para centralizar conteúdo */
+    align-items: center; /* Alinha o texto verticalmente */
+    justify-content: center; /* Centraliza horizontalmente o conteúdo */
+    background-color: #e6e0e0;
+    border: 1px solid black;
+    font-size: 8px; /* Diminui o tamanho da fonte */
+    cursor: pointer; /* Cursor de ponteiro */
+  }
+  
+  #btn-entre-header-main:hover {
+    background-color: lightgreen; /* Cor mais escura ao passar o mouse */
+  }
+
+  #btn-entre-header-main:active {
+    background-color: rgb(71, 119, 71);
+  }
+  
