@@ -9,11 +9,12 @@ import { RouterOutlet } from '@angular/router';
 import { ControleAbasComponent } from './controle-abas/controle-abas.component';
 import { ModalComponent } from './modal/modal.component';
 import { ModalService } from './services/modal.service';
+import { BotaoAbasExcedentesComponent } from './botao-abas-excedentes/botao-abas-excedentes.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ControleAbasComponent, ModalComponent],
+  imports: [RouterOutlet, ControleAbasComponent, ModalComponent, BotaoAbasExcedentesComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

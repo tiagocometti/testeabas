@@ -1,0 +1,23 @@
+.btn-abas-excedentes {
+    position: absolute;
+    top: calc(55.5px + 1rem); /* Ajusta a posição entre o header e o main */
+    right: 15px; /* Margem direita */
+    width: 15px; /* Largura do botão */
+    height: 10px; /* Altura do botão */
+    display: flex; /* Para centralizar conteúdo */
+    align-items: center; /* Alinha o texto verticalmente */
+    justify-content: center; /* Centraliza horizontalmente o conteúdo */
+    background-color: #e6e0e0;
+    border: 1px solid black;
+    font-size: 8px; /* Diminui o tamanho da fonte */
+    cursor: pointer; /* Cursor de ponteiro */
+  }
+  
+  .btn-abas-excedentes:hover {
+    background-color: lightgreen; /* Cor mais escura ao passar o mouse */
+  }
+
+  .btn-abas-excedentes:active {
+    background-color: rgb(71, 119, 71);
+  }
+  
