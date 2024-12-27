@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,16 +7,33 @@ import { CommonModule } from '@angular/common';
   templateUrl: './botao-abas-excedentes.component.html',
   styleUrl: './botao-abas-excedentes.component.css',
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
-export class BotaoAbasExcedentesComponent {
+export class BotaoAbasExcedentesComponent implements OnChanges {
   mostrarLista: boolean = false;
-  @Input() visible: boolean = false;
 
+  @Input() visible: boolean = false; // Controla a visibilidade do botão
+  @Input() abasExcedentes: string[] = []; // Lista de abas excedentes recebida
+
+  // Detecta mudanças nos inputs
+  ngOnChanges(changes: SimpleChanges): void {
+    // Fecha a lista automaticamente se o botão desaparecer
+    if (changes['visible'] && !this.visible) {
+      this.mostrarLista = false;
+    }
+
+    // Fecha a lista se a lista de abas excedentes ficar vazia
+    if (changes['abasExcedentes'] && this.abasExcedentes.length === 0) {
+      this.mostrarLista = false;
+    }
+  }
+
+  // Alterna a visibilidade da lista
   toggleLista() {
     this.mostrarLista = !this.mostrarLista;
   }
 
+  // Fecha a lista ao clicar fora dela
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     const target = event.target as HTMLElement;

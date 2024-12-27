@@ -1,8 +1,10 @@
 <header>
   <h1>Teste Abas</h1>
 
-  <botao-abas-excedentes [visible]="mostrarBotaoAbasExcedentes"></botao-abas-excedentes>
-
+  <botao-abas-excedentes
+    [visible]="mostrarBotaoAbasExcedentes"
+    [abasExcedentes]="abasExcedentesTexto.split(', ')"
+  ></botao-abas-excedentes>
 </header>
 
 <ng-container #modal></ng-container>
@@ -23,7 +25,8 @@
 </main>
 
 <!-- Labels para exibir abas visíveis e excedentes -->
-<div style="margin-top: 20px;">
-  <label><strong>Abas Visíveis:</strong> {{ abasVisiveisTexto }}</label><br>
+<div style="margin-top: 20px">
+  <label><strong>Abas Visíveis:</strong> {{ abasVisiveisTexto }}</label
+  ><br />
   <label><strong>Abas Excedentes:</strong> {{ abasExcedentesTexto }}</label>
 </div>
