@@ -14,7 +14,12 @@ import { BotaoAbasExcedentesComponent } from './botao-abas-excedentes/botao-abas
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ControleAbasComponent, ModalComponent, BotaoAbasExcedentesComponent],
+  imports: [
+    RouterOutlet,
+    ControleAbasComponent,
+    ModalComponent,
+    BotaoAbasExcedentesComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -24,6 +29,7 @@ export class AppComponent implements AfterViewInit {
   conteinerRef!: ViewContainerRef;
   abasVisiveisTexto: string = '';
   abasExcedentesTexto: string = '';
+  mostrarBotaoAbasExcedentes: boolean = false;
 
   constructor(
     private abasService: AbasService,
@@ -44,5 +50,6 @@ export class AppComponent implements AfterViewInit {
 
   atualizarAbasExcedentes(texto: string) {
     this.abasExcedentesTexto = texto;
+    this.mostrarBotaoAbasExcedentes = texto.length > 0;
   }
 }

@@ -1,23 +1,48 @@
 .btn-abas-excedentes {
-    position: absolute;
-    top: calc(55.5px + 1rem); /* Ajusta a posição entre o header e o main */
-    right: 15px; /* Margem direita */
-    width: 15px; /* Largura do botão */
-    height: 10px; /* Altura do botão */
-    display: flex; /* Para centralizar conteúdo */
-    align-items: center; /* Alinha o texto verticalmente */
-    justify-content: center; /* Centraliza horizontalmente o conteúdo */
-    background-color: #e6e0e0;
-    border: 1px solid black;
-    font-size: 8px; /* Diminui o tamanho da fonte */
-    cursor: pointer; /* Cursor de ponteiro */
-  }
-  
-  .btn-abas-excedentes:hover {
-    background-color: lightgreen; /* Cor mais escura ao passar o mouse */
-  }
+  position: absolute;
+  top: calc(55.5px + 1rem); /* Ajusta a posição entre o header e o main */
+  right: 15px; /* Margem direita */
+  width: 15px; /* Largura do botão */
+  height: 10px; /* Altura do botão */
+  display: flex; /* Para centralizar conteúdo */
+  align-items: center; /* Alinha o texto verticalmente */
+  justify-content: center; /* Centraliza horizontalmente o conteúdo */
+  background-color: #e6e0e0;
+  border: 1px solid black;
+  font-size: 8px; /* Diminui o tamanho da fonte */
+  cursor: pointer; /* Cursor de ponteiro */
+}
 
-  .btn-abas-excedentes:active {
-    background-color: rgb(71, 119, 71);
+.btn-abas-excedentes:hover {
+  background-color: lightgreen; /* Cor mais escura ao passar o mouse */
+}
+
+.btn-abas-excedentes:active {
+  background-color: darkgreen;
+}
+
+.lista-abas-excedentes {
+  position: absolute;
+  top: calc(55.5px + 2rem); /* Ajusta a posição abaixo do botão */
+  right: 15px; /* Margem direita */
+  background-color: white;
+  border: 1px solid black;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 150px; /* Largura da lista */
+  z-index: 1000; /* Garante que a lista fique acima de outros elementos */
+}
+
+.lista-abas-excedentes li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.lista-abas-excedentes li:hover {
+  background-color: lightgray;
+}
+
+.lista-abas-excedentes li:active {
+    background-color: lightgreen; 
   }
-  

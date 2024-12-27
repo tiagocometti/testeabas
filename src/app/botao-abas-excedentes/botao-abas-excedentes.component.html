@@ -1,1 +1,7 @@
-<button class="btn-abas-excedentes">▼</button>
+<!-- botao-abas-excedentes.component.html -->
+<button *ngIf="visible" class="btn-abas-excedentes" (click)="toggleLista()">▼</button>
+<ul *ngIf="mostrarLista" class="lista-abas-excedentes">
+  <li>aba1</li>
+  <li>aba2</li>
+  <li>aba3</li>
+</ul>
