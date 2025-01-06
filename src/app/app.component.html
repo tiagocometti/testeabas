@@ -4,6 +4,7 @@
   <botao-abas-excedentes
     [visible]="mostrarBotaoAbasExcedentes"
     [abasExcedentes]="abasExcedentesTexto.split(', ')"
+    (abaSelecionada)="moverAbaParaVisivel($event)"
   ></botao-abas-excedentes>
 </header>
 
@@ -19,6 +20,7 @@
 
 <main>
   <controle-abas
+    #controleAbas
     (abasVisiveisMudaram)="atualizarAbasVisiveis($event)"
     (abasExcedentesMudaram)="atualizarAbasExcedentes($event)"
   ></controle-abas>

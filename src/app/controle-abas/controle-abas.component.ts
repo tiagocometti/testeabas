@@ -259,5 +259,32 @@ export class ControleAbasComponent implements OnDestroy {
     }, 0);
   }
 
-  
+  moverAbaParaVisivel(uniqueCode: string) {
+    // Localiza a aba na lista de abas (incluindo visíveis e excedentes)
+    const indice = this.abas.findIndex((aba) => aba.uniqueCode === uniqueCode);
+    if (indice === -1) {
+      console.warn('Aba não encontrada:', uniqueCode);
+      return;
+    }
+
+    // Remove a aba da posição atual
+    const abaSelecionada = this.abas.splice(indice, 1)[0];
+
+    // Move a aba para a primeira posição
+    this.abas.forEach((aba) => (aba.conteudo.instance.EstaAtivo = false)); // Desativa todas as abas
+    abaSelecionada.conteudo.instance.EstaAtivo = true; // Ativa a aba selecionada
+    this.abas.unshift(abaSelecionada);
+
+    // Atualiza o container para exibir o conteúdo da aba selecionada
+    this.containerRef.detach();
+    this.containerRef.insert(abaSelecionada.view);
+
+    // Atualiza a URL para refletir a aba selecionada
+    this.router.navigate([`/${uniqueCode}`]);
+
+    // Atualiza as listas de abas visíveis e excedentes
+    setTimeout(() => {
+      this.detectarAbasExcedentes();
+    }, 0);
+  }
 }

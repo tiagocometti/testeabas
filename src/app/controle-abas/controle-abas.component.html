@@ -4,6 +4,7 @@
     [Header]="item.header"
     [EstaAtivo]="item.conteudo.instance.EstaAtivo"
     [UniqueCode]="item.uniqueCode"
+    [ngClass]="{ excedente: excedentes.includes(item) }"
     (Selecionado)="selecionarAba($event)"
     (Fechar)="fecharAba($event)"
   ></item-abas-header>

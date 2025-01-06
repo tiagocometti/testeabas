@@ -1,7 +1,14 @@
 <!-- Botão -->
-<button *ngIf="visible" class="btn-abas-excedentes" (click)="toggleLista()">▼</button>
+<button *ngIf="visible" class="btn-abas-excedentes" (click)="toggleLista()">
+  ▼
+</button>
 
 <!-- Lista de abas excedentes -->
-<ul *ngIf="mostrarLista && abasExcedentes.length > 0" class="lista-abas-excedentes">
-  <li *ngFor="let aba of abasExcedentes">{{ aba | titlecase}}</li>
+<ul
+  *ngIf="mostrarLista && abasExcedentes.length > 0"
+  class="lista-abas-excedentes"
+>
+  <li *ngFor="let aba of abasExcedentes" (click)="selecionarAba(aba)">
+    {{ aba | titlecase }}
+  </li>
 </ul>

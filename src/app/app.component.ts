@@ -21,12 +21,17 @@ import { BotaoAbasExcedentesComponent } from './botao-abas-excedentes/botao-abas
     BotaoAbasExcedentesComponent,
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements AfterViewInit {
   title = 'TesteAbas';
+
   @ViewChild('modal', { read: ViewContainerRef, static: true })
   conteinerRef!: ViewContainerRef;
+
+  @ViewChild('controleAbas', { static: false })
+  controleAbas!: ControleAbasComponent;
+
   abasVisiveisTexto: string = '';
   abasExcedentesTexto: string = '';
   mostrarBotaoAbasExcedentes: boolean = false;
@@ -51,5 +56,13 @@ export class AppComponent implements AfterViewInit {
   atualizarAbasExcedentes(texto: string) {
     this.abasExcedentesTexto = texto;
     this.mostrarBotaoAbasExcedentes = texto.length > 0;
+  }
+
+  moverAbaParaVisivel(uniqueCode: string) {
+    if (this.controleAbas) {
+      this.controleAbas.moverAbaParaVisivel(uniqueCode);
+    } else {
+      console.warn('ControleAbasComponent não está disponível.');
+    }
   }
 }

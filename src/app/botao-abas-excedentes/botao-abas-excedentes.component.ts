@@ -1,4 +1,13 @@
-import { Component, HostListener, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  Output,
+  ViewEncapsulation,
+  OnChanges,
+  SimpleChanges,
+  EventEmitter,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,6 +23,7 @@ export class BotaoAbasExcedentesComponent implements OnChanges {
 
   @Input() visible: boolean = false; // Controla a visibilidade do botão
   @Input() abasExcedentes: string[] = []; // Lista de abas excedentes recebida
+  @Output() abaSelecionada = new EventEmitter<string>(); // Emissor para notificar a seleção
 
   // Detecta mudanças nos inputs
   ngOnChanges(changes: SimpleChanges): void {
@@ -37,8 +47,16 @@ export class BotaoAbasExcedentesComponent implements OnChanges {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.btn-abas-excedentes') && !target.closest('.lista-abas-excedentes')) {
+    if (
+      !target.closest('.btn-abas-excedentes') &&
+      !target.closest('.lista-abas-excedentes')
+    ) {
       this.mostrarLista = false;
     }
+  }
+
+  selecionarAba(aba: string) {
+    this.abaSelecionada.emit(aba); // Emite o código único da aba selecionada
+    this.mostrarLista = false; // Fecha a lista após a seleção
   }
 }
